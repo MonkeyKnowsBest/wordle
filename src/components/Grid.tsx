@@ -12,7 +12,9 @@ interface GridProps {
 }
 
 const Grid: React.FC<GridProps> = ({ guesses, currentGuess, targetWord, maxAttempts, wordLength, darkMode }) => {
-  const empties = maxAttempts - guesses.length - 1;
+  // Calculate how many empty rows we need
+  const empties = Math.max(0, maxAttempts - guesses.length - (guesses.length < maxAttempts ? 1 : 0));
+  
   return (
     <div className={`grid gap-2 ${wordLength > 6 ? 'max-w-5xl' : 'max-w-3xl'} mx-auto`}>
       {guesses.map((guess, i) => (
