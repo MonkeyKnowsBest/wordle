@@ -348,19 +348,25 @@ const handleKeyPress = (key: string) => {
             darkMode={darkMode}
           />
           
-          {gameState.gameOver && (
-            <div className="text-center my-4">
-              {gameState.won ? (
-                <p className="text-green-600 font-bold text-xl">
-                  Congratulations! You won!
-                </p>
-              ) : (
-                <p className={`font-bold text-xl ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                  Game Over! The word was: {gameState.targetWord}
-                </p>
-              )}
-            </div>
-          )}
+         {gameState.gameOver && (
+  <div className="text-center my-4">
+    {gameState.won ? (
+      <p className="text-green-600 font-bold text-xl">
+        Congratulations! You won!
+      </p>
+    ) : (
+      <p className={`font-bold text-xl ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+        Game Over! The word was: {gameState.targetWord}
+      </p>
+    )}
+    <button
+      onClick={() => startNewGame()}
+      className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+    >
+      Play Again
+    </button>
+  </div>
+)}
 
           <Keyboard
             onKeyPress={handleKeyPress}
