@@ -79,33 +79,54 @@ function App() {
     }
   };
 
-  const handleKeyPress = (key: string) => {
-    if (gameState.gameOver) return;
+const handleKeyPress = (key: string) => {
+  if (gameState.gameOver) return;
 
-    if (key === 'Enter') {
-      if (gameState.currentGuess.length !== wordLength) return;
-      
-      const isValidWord = validateWord(gameState.currentGuess, [...dictionary.solutions, ...dictionary.valid]);
-      if (!isValidWord) {
-        setError('Word not in dictionary');
-        setTimeout(() => setError(''), 2000);
-        return;
+  if (key === 'Enter') {
+    if (gameState.currentGuess.length !== wordLength) return;
+    
+    const isValidWord = validateWord(gameState.currentGuess, [...dictionary.solutions, ...dictionary.valid]);
+    if (!isValidWord) {
+      setError('Word not in dictionary');
+      setTimeout(() => setError(''), 2000);
+      return;
+    }
+
+    const newGuesses = [...gameState.guesses, gameState.currentGuess];
+    const won = gameState.currentGuess === gameState.targetWord;
+    const gameOver = won || newGuesses.length >= maxAttempts;
+
+    const guessResult = checkGuess(gameState.currentGuess, gameState.targetWord);
+    const newLetterStates = { ...letterStates };
+    gameState.currentGuess.split('').forEach((letter, i) => {
+      const currentState = newLetterStates[letter];
+      const newState = guessResult[i];
+      if (!currentState || (newState === 'correct' && currentState !== 'correct')) {
+        newLetterStates[letter] = newState;
       }
+    });
 
-      const newGuesses = [...gameState.guesses, gameState.currentGuess];
-      const won = gameState.currentGuess === gameState.targetWord;
-      const gameOver = won || newGuesses.length === maxAttempts;
-
-      const guessResult = checkGuess(gameState.currentGuess, gameState.targetWord);
-      const newLetterStates = { ...letterStates };
-      gameState.currentGuess.split('').forEach((letter, i) => {
-        const currentState = newLetterStates[letter];
-        const newState = guessResult[i];
-        if (!currentState || (newState === 'correct' && currentState !== 'correct')) {
-          newLetterStates[letter] = newState;
-        }
-      });
-
+    setLetterStates(newLetterStates);
+    setGameState({
+      ...gameState,
+      guesses: newGuesses,
+      currentGuess: '',
+      gameOver,
+      won
+    });
+  } else if (key === 'Backspace') {
+    setGameState({
+      ...gameState,
+      currentGuess: gameState.currentGuess.slice(0, -1)
+    });
+  } else if (/^[A-Z]$/.test(key) && gameState.currentGuess.length < wordLength) {
+    setGameState({
+      ...gameState,
+      currentGuess: gameState.currentGuess + key.toLowerCase()
+    });
+  }
+};
+  
       setLetterStates(newLetterStates);
       setGameState({
         ...gameState,
