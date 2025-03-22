@@ -27,3 +27,12 @@ export const checkGuess = (guess: string, targetWord: string): LetterState[] => 
   
   return result;
 };
+
+export const validateWord = (word: string, dictionary: string[]): boolean => {
+  // Check if the word exists in the dictionary
+  // The dictionary words may start with '$' so we need to check both with and without it
+  return dictionary.some(dictWord => {
+    const trimmedDictWord = dictWord.startsWith('$') ? dictWord.slice(1) : dictWord;
+    return trimmedDictWord.toLowerCase() === word.toLowerCase();
+  });
+};
